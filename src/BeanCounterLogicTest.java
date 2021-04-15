@@ -1,7 +1,11 @@
+import static org.junit.Assert.*;
+
 import java.util.Random;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 /**
  * Code by @author Wonsun Ahn
@@ -102,7 +106,18 @@ public class BeanCounterLogicTest {
 	 */
 	@Test
 	public void testAdvanceStepCoordinates() {
-		// TODO: Implement
+		boolean stepSuccessful = true;
+		logic.reset(beans);
+		do {
+			stepSuccessful = logic.advanceStep();
+			for (Bean b : beans) {
+				boolean res = false;
+				if (b.getXPos() >= 0 && b.getXPos() < slotCount) {
+					res = true;
+				}
+				assertTrue(res);
+			}
+		} while (stepSuccessful);
 	}
 
 	/**
@@ -115,7 +130,37 @@ public class BeanCounterLogicTest {
 	 */
 	@Test
 	public void testAdvanceStepBeanCount() {
-		// TODO: Implement
+		boolean stepSuccessful = true;
+		logic.reset(beans);
+//		System.out.println("After reset");
+//		System.out.println(logic.toString());
+		do {
+//			System.out.println("begin");
+			int sum = 0;
+			stepSuccessful = logic.advanceStep();
+			// number of beans still remaining
+			sum += logic.getRemainingBeanCount();
+//			System.out.println(sum);
+			
+//			System.out.println("in-flight");
+			// number of beans in-flight
+			for (int y = 0; y < slotCount; y++) {
+				if (logic.getInFlightBeanXPos(y) != -1) {
+					sum++;
+//					System.out.println(sum);
+				}
+			}
+//			System.out.println("in-slot");
+			// number of beans in-slot
+			for (int i = 0; i < beans.length; i++) {
+				sum += logic.getSlotBeanCount(i);
+//				System.out.println(sum);
+			}
+//			System.out.println("end");
+//			System.out.println(logic.toString());
+				// expected 3 but was 6
+			assertEquals(beanCount, sum);
+		} while (stepSuccessful);
 	}
 
 	/**
@@ -130,7 +175,27 @@ public class BeanCounterLogicTest {
 	 */
 	@Test
 	public void testAdvanceStepPostCondition() {
-		// TODO: Implement
+		boolean stepSuccessful = true;
+		int inFlight = 0;
+		int inSlot = 0;
+		logic.reset(beans);
+		do {
+			stepSuccessful = logic.advanceStep();
+		} while (stepSuccessful);
+		
+		assertEquals(0, logic.getRemainingBeanCount());
+		
+		for (int y = 0; y < slotCount; y++) {
+			if (logic.getInFlightBeanXPos(y) != -1) {
+				inFlight++;
+			}
+		}
+		assertEquals(0, inFlight);
+		
+		for (int i = 0; i < beans.length; i++) {
+			inSlot += logic.getSlotBeanCount(i);
+		}
+		assertEquals(beanCount, inSlot);
 	}
 	
 	/**
@@ -148,10 +213,10 @@ public class BeanCounterLogicTest {
 	 *             Remember, if there were an odd number of beans, (N+1)/2 beans should remain.
 	 *             Check each slot for the expected number of beans after having called logic.lowerHalf().
 	 */
-	@Test
-	public void testLowerHalf() {
-		// TODO: Implement
-	}
+//	@Test
+//	public void testLowerHalf() {
+//		// TODO: Implement
+//	}
 	
 	/**
 	 * Test case for void upperHalf().
@@ -168,10 +233,10 @@ public class BeanCounterLogicTest {
 	 *             Remember, if there were an odd number of beans, (N+1)/2 beans should remain.
 	 *             Check each slot for the expected number of beans after having called logic.upperHalf().
 	 */
-	@Test
-	public void testUpperHalf() {
-		// TODO: Implement
-	}
+//	@Test
+//	public void testUpperHalf() {
+//		// TODO: Implement
+//	}
 	
 	/**
 	 * Test case for void repeat().
@@ -183,8 +248,8 @@ public class BeanCounterLogicTest {
 	 * Invariants: If the machine is operating in skill mode,
 	 *             bean count in each slot is identical after the first run and second run of the machine. 
 	 */
-	@Test
-	public void testRepeat() {
-		// TODO: Implement
-	}
+//	@Test
+//	public void testRepeat() {
+//		// TODO: Implement
+//	}
 }

@@ -27,7 +27,12 @@ import java.util.Random;
  */
 
 public class BeanCounterLogicImpl implements BeanCounterLogic {
-	// TODO: Add member methods and variables as needed
+	int slotCount;
+	int beanCount;
+	int beansRemaining;
+	Bean[] beans;
+	Bean[] beansInFlight;
+	int[] beansInSlot;
 
 	/**
 	 * Constructor - creates the bean counter logic object that implements the core
@@ -36,7 +41,12 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @param slotCount the number of slots in the machine
 	 */
 	BeanCounterLogicImpl(int slotCount) {
-		// TODO: Implement
+		this.slotCount = slotCount;
+		this.beansInSlot = new int[slotCount];
+		for(int i = 0; i < beansInSlot.length; i++) {
+			beansInSlot[i] = 0;
+		}
+		this.beansInFlight = new Bean[slotCount];
 	}
 
 	/**
@@ -45,8 +55,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @return number of slots
 	 */
 	public int getSlotCount() {
-		// TODO: Implement
-		return 1;
+		return this.slotCount;
 	}
 	
 	/**
@@ -55,8 +64,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @return number of beans remaining
 	 */
 	public int getRemainingBeanCount() {
-		// TODO: Implement
-		return 0;
+		return this.beansRemaining;
 	}
 
 	/**
@@ -66,8 +74,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @return the x-coordinate of the in-flight bean; if no bean in y-coordinate, return NO_BEAN_IN_YPOS
 	 */
 	public int getInFlightBeanXPos(int yPos) {
-		// TODO: Implement
-		return NO_BEAN_IN_YPOS;
+		return beansInFlight[yPos] != null ? beansInFlight[yPos].getXPos() : NO_BEAN_IN_YPOS;
 	}
 
 	/**
@@ -77,8 +84,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @return number of beans in slot
 	 */
 	public int getSlotBeanCount(int i) {
-		// TODO: Implement
-		return 0;
+		return i >= 0 && i < slotCount ? beansInSlot[i] : null;
 	}
 
 	/**
@@ -118,16 +124,41 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @param beans array of beans to add to the machine
 	 */
 	public void reset(Bean[] beans) {
-		// TODO: Implement
+		this.beans = beans;
+		// we can get the number of beans remaining
+		this.beanCount = beans.length;
+		
+		this.beansRemaining = beans.length - 1;
+		
+		// initialize beansInFlight
+		for(int i = 0; i < beansInFlight.length; i++) {
+			if (i == 0) {
+				// first bean is initialized
+				beansInFlight[i] = beans[0];
+			}
+			else {
+				beansInFlight[i] = null;
+			}
+		}
+		// reinitialize the beans in-slot
+		for(int i = 0; i < beansInSlot.length; i++) {
+			beansInSlot[i] = 0;
+		}
 	}
 
 	/**
+	 *
+	Bean[] beansInFlight;
+	int[] beansInSlot;
 	 * Repeats the experiment by scooping up all beans in the slots and all beans
 	 * in-flight and adding them into the pool of remaining beans. As in the
 	 * beginning, the machine starts with one bean at the top.
 	 */
 	public void repeat() {
-		// TODO: Implement
+		// we can get the number of beans remaining
+		this.beanCount = beans.length;
+		this.beansRemaining = beans.length - 1;
+		beansInFlight[0] = beans[0];
 	}
 
 	/**
@@ -139,8 +170,43 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 *         means the machine is finished.
 	 */
 	public boolean advanceStep() {
-		// TODO: Implement
-		return false;
+		boolean statusChange = false;
+		// if an in-flight bean is ready to be slotted
+		if (beansInFlight[slotCount-1] != null) {
+			statusChange = true;
+			// increment number of beans in that position
+			beansInSlot[beansInFlight[slotCount-1].getXPos()]++;
+		}
+
+		
+		for (int i = beansInFlight.length-1; i > 0; i--) {
+			if (beansInFlight[i-1] != null) {
+				statusChange = true;
+				beansInFlight[i-1].choose();
+				beansInFlight[i] = beansInFlight[i-1];
+			}
+			else {
+				beansInFlight[i] = null;
+			}
+		}
+		Bean nextBean = this.getNextBean();
+		if(nextBean != null) {
+			statusChange = true;
+			beansInFlight[0] = nextBean;
+		}
+		else {
+			beansInFlight[0] = null;
+		}
+		return statusChange;
+	}
+	
+	private Bean getNextBean() {
+		int nextIndex = beanCount - beansRemaining;
+		if (beansRemaining > 0) {
+			beansRemaining--;
+		}
+//		System.out.println("nextIndex: " + nextIndex);
+		return nextIndex < beanCount ? beans[nextIndex] : null;
 	}
 	
 	/**

@@ -14,7 +14,7 @@ import java.util.Random;
  * <p>A skill level of 9 means it always makes the "right" choices (pun intended)
  * when the machine is operating in skill mode ("skill" passed on command line).
  * That means the bean will always go right when a peg is encountered, resulting
- * it falling into slot 9. A skill evel of 0 means that the bean will always go
+ * it falling into slot 9. A skill level of 0 means that the bean will always go
  * left, resulting it falling into slot 0. For the in-between skill levels, the
  * bean will first go right then left. For example, for a skill level of 7, the
  * bean will go right 7 times then go left twice.
@@ -28,9 +28,11 @@ import java.util.Random;
 
 public class BeanImpl implements Bean {
 	
-	// TODO: Add more member variables as needed
 	private int xpos;
-
+	private boolean luck;
+	private int skillLevel;
+	private Random rand;
+	
 	/**
 	 * Constructor - creates a bean in either luck mode or skill mode.
 	 * 
@@ -39,7 +41,19 @@ public class BeanImpl implements Bean {
 	 * @param rand		the random number generator
 	 */
 	BeanImpl(int slotCount, boolean isLuck, Random rand) {
-		// TODO: Implement
+		this.luck = isLuck;
+		this.rand = rand;
+		
+		if(!isLuck) {
+			double avg = (double) (slotCount - 1) * 0.5;
+			double dev = (double) Math.sqrt(slotCount * 0.5 * (1 - 0.5));
+			this.skillLevel = (int) Math.round(rand.nextGaussian() * dev + avg);
+		}
+		else {
+			this.skillLevel = -1;
+		}
+		
+		this.xpos = 0;
 	}
 	
 	/**
@@ -48,8 +62,7 @@ public class BeanImpl implements Bean {
 	 * @return the current X-coordinate of the bean
 	 */
 	public int getXPos() {
-		// TODO: Implement
-		return 0;
+		return this.xpos;
 	}
 
 	/**
@@ -57,7 +70,7 @@ public class BeanImpl implements Bean {
 	 * to 0. 
 	 */
 	public void reset() {
-		// TODO: Implement
+		xpos = 0;
 	}
 	
 	/**
@@ -66,6 +79,30 @@ public class BeanImpl implements Bean {
 	 * right.  The X-coordinate is updated accordingly.
 	 */
 	public void choose() {
-		// TODO: Implement
+		if (luck) {
+			int dir = rand.nextInt(2);
+			if (dir == 0) {
+				if (xpos > 0) {
+					xpos--;
+				}
+			}
+			else {
+				xpos++;
+			}
+		}
+		// skill
+		else {
+			// if skill has not yet run out, move right
+			if (skillLevel > 0) {
+				xpos++;
+				skillLevel--;
+			}
+			// otherwise, start moving left unless bean is already at x-position 0
+			else {
+				if (xpos > 0) {
+					xpos--;
+				}
+			}
+		}
 	}
 }
