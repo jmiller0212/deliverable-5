@@ -137,16 +137,19 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 			this.beansRemaining = 0;
 		}
 		
-		// initialize beansInFlight
-		for (int i = 0; i < slotCount; i++) {
-			if (i == 0) {
-				// first bean is initialized
-				beansInFlight[i] = beans[0];
-			}
-			else {
-				beansInFlight[i] = null;
+		if (beans.length > 0) {
+			// initialize beansInFlight
+			for (int i = 0; i < slotCount; i++) {
+				if (i == 0) {
+					// first bean is initialized
+					beansInFlight[i] = beans[0];
+				}
+				else {
+					beansInFlight[i] = null;
+				}
 			}
 		}
+
 		// zero out the beans in-slot
 		for (int i = 0; i < slotCount; i++) {
 			beansInSlot[i] = 0;
