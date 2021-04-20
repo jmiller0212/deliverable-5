@@ -44,12 +44,11 @@ public class BeanImpl implements Bean {
 		this.luck = isLuck;
 		this.rand = rand;
 		
-		if(!isLuck) {
+		if (!isLuck) {
 			double avg = (double) (slotCount - 1) * 0.5;
 			double dev = (double) Math.sqrt(slotCount * 0.5 * (1 - 0.5));
 			this.skillLevel = (int) Math.round(rand.nextGaussian() * dev + avg);
-		}
-		else {
+		} else {
 			this.skillLevel = -1;
 		}
 		
@@ -84,16 +83,12 @@ public class BeanImpl implements Bean {
 			if (dir == 1) {
 				xpos++;
 			}
-			// otherwise, bean implicitly moves left
-		}
-		// skill
-		else {
+		} else {
 			// if skill has not yet run out, move right
 			if (skillLevel > 0) {
 				xpos++;
 				skillLevel--;
 			}
-			// otherwise, bean implicitly moves left
 		}
 	}
 }

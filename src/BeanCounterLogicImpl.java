@@ -42,7 +42,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	BeanCounterLogicImpl(int slotCount) {
 		this.slotCount = slotCount;
 		this.beansInSlot = new int[slotCount];
-		for(int i = 0; i < beansInSlot.length; i++) {
+		for (int i = 0; i < beansInSlot.length; i++) {
 			beansInSlot[i] = 0;
 		}
 		this.beansInFlight = new Bean[slotCount];
@@ -115,6 +115,11 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	public void lowerHalf() {
 		// TODO: Implement
 	}
+	
+	private Bean[] copy(Bean[] beans) {
+		
+		return null;
+	}
 
 	/**
 	 * A hard reset. Initializes the machine with the passed beans. The machine
@@ -132,8 +137,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		// we can get the number of beans remaining
 		if (beans.length > 0) {
 			this.beansRemaining = beans.length - 1;
-		}
-		else {
+		} else {
 			this.beansRemaining = 0;
 		}
 		
@@ -143,8 +147,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 				if (i == 0) {
 					// first bean is initialized
 					beansInFlight[i] = beans[0];
-				}
-				else {
+				} else {
 					beansInFlight[i] = null;
 				}
 			}
@@ -173,8 +176,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 			if (i == 0) {
 				// first bean is initialized
 				beansInFlight[i] = beans[0];
-			}
-			else {
+			} else {
 				beansInFlight[i] = null;
 			}
 		}
@@ -196,31 +198,26 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		boolean statusChange = false;
 
 		// if an in-flight bean is ready to be slotted
-		if (beansInFlight[slotCount-1] != null) {
+		if (beansInFlight[slotCount - 1] != null) {
 			statusChange = true;
 			// increment number of beans in that position
-			beansInSlot[beansInFlight[slotCount-1].getXPos()]++;
+			beansInSlot[beansInFlight[slotCount - 1].getXPos()]++;
 		}
-		// what i think is that there is a corner case not satisfied here
-//		else if ()
 
-		
-		for (int i = beansInFlight.length-1; i > 0; i--) {
-			if (beansInFlight[i-1] != null) {
+		for (int i = beansInFlight.length - 1; i > 0; i--) {
+			if (beansInFlight[i - 1] != null) {
 				statusChange = true;
-				beansInFlight[i-1].choose();
-				beansInFlight[i] = beansInFlight[i-1];
-			}
-			else {
+				beansInFlight[i - 1].choose();
+				beansInFlight[i] = beansInFlight[i - 1];
+			} else {
 				beansInFlight[i] = null;
 			}
 		}
 		Bean nextBean = this.getNextBean();
-		if(nextBean != null) {
+		if (nextBean != null) {
 			statusChange = true;
 			beansInFlight[0] = nextBean;
-		}
-		else {
+		} else {
 			beansInFlight[0] = null;
 		}
 		return statusChange;
@@ -277,9 +274,9 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	public String toString() {
 		StringBuilder bld = new StringBuilder();
 		Formatter fmt = new Formatter(bld);
-		for (int yPos = 0; yPos < getSlotCount(); yPos++) {	// for each y position (Height of the tree)
-			int xBeanPos = getInFlightBeanXPos(yPos);		// get the bean's x-coordinate for that height
-			for (int xPos = 0; xPos <= yPos; xPos++) {		// for each 
+		for (int yPos = 0; yPos < getSlotCount(); yPos++) {
+			int xBeanPos = getInFlightBeanXPos(yPos);
+			for (int xPos = 0; xPos <= yPos; xPos++) {
 				int spacing = (xPos == 0) ? getIndent(yPos) : (xspacing + 1);
 				String format = "%" + spacing + "d";
 				if (xPos == xBeanPos) {

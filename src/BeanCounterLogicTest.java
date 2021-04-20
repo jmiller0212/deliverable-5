@@ -1,11 +1,9 @@
-import static org.junit.Assert.*;
 import gov.nasa.jpf.vm.Verify;
-
 import java.util.Random;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 
 /**
  * Code by @author Wonsun Ahn
@@ -85,50 +83,47 @@ public class BeanCounterLogicTest {
 		int inFlightCount = 0;
 		int inSlotCount = 0;
 		if (beanCount > 0) {
-			assertEquals(failString, beanCount-1, logic.getRemainingBeanCount());
-			
+			Assert.assertEquals(failString, beanCount - 1, logic.getRemainingBeanCount());
 			// if slotCount == 1 then don't use the for loop. in for loop condition, 1-1 = 0 so the
-			// in-flight bean will never be checked and the assertion will always fail so just do it manually here.
+			// in-flight bean will never be checked and the assertion will always fail
+			// so just do it manually here.
 			if (slotCount == 1) {
 				if (logic.getInFlightBeanXPos(0) >= 0) {
 					inFlightCount++;
 				}
-			}
-			else {
-				for (int y = 0; y < slotCount-1; y++) {
+			} else {
+				for (int y = 0; y < slotCount - 1; y++) {
 					if (logic.getInFlightBeanXPos(y) >= 0) {
 						inFlightCount++;
 					}
 				}
 			}
-			assertEquals(failString, 1, inFlightCount);
+			Assert.assertEquals(failString, 1, inFlightCount);
 			
 			for (int i = 0; i < slotCount; i++) {
 				inSlotCount += logic.getSlotBeanCount(i);
 			}
-			assertEquals(failString, 0, inSlotCount);
-		}
-		else if (beanCount == 0) {
-			assertEquals(failString, 0, logic.getRemainingBeanCount());
+			Assert.assertEquals(failString, 0, inSlotCount);
+		} else if (beanCount == 0) {
+			Assert.assertEquals(failString, 0, logic.getRemainingBeanCount());
 			
 			if (slotCount == 1) {
 				if (logic.getInFlightBeanXPos(0) >= 0) {
 					inFlightCount++;
 				}
-			}
-			else {
-				for (int y = 0; y < slotCount-1; y++) {
+			} else {
+				for (int y = 0; y < slotCount - 1; y++) {
 					if (logic.getInFlightBeanXPos(y) >= 0) {
 						inFlightCount++;
 					}
 				}
 			}
-			assertEquals(failString, 0, inFlightCount);
+			Assert.assertEquals(failString, 0, inFlightCount);
 			
 			for (int i = 0; i < slotCount; i++) {
 				inSlotCount += logic.getSlotBeanCount(i);
 			}
-			assertEquals(failString, 0, inSlotCount);
+			Assert.assertEquals(failString, 0, inSlotCount);
 		}
 	}
 
@@ -152,7 +147,7 @@ public class BeanCounterLogicTest {
 				if (b.getXPos() >= 0 && b.getXPos() < slotCount) {
 					res = true;
 				}
-				assertTrue(failString, res);
+				Assert.assertTrue(failString, res);
 			}
 		} while (stepSuccessful);
 	}
@@ -167,7 +162,7 @@ public class BeanCounterLogicTest {
 	 */
 	@Test
 	public void testAdvanceStepBeanCount() {
-//		System.out.println(failString);
+		// System.out.println(failString);
 		boolean stepSuccessful = true;
 		int sum;
 		int slotBeanCount;
@@ -192,7 +187,7 @@ public class BeanCounterLogicTest {
 					sum += slotBeanCount;
 				}
 			}
-			assertEquals(failString, beanCount, sum);
+			Assert.assertEquals(failString, beanCount, sum);
 		} while (stepSuccessful);
 	}
 
@@ -216,19 +211,19 @@ public class BeanCounterLogicTest {
 			stepSuccessful = logic.advanceStep();
 		} while (stepSuccessful);
 		
-		assertEquals(failString, 0, logic.getRemainingBeanCount());
+		Assert.assertEquals(failString, 0, logic.getRemainingBeanCount());
 		
 		for (int y = 0; y < slotCount; y++) {
 			if (logic.getInFlightBeanXPos(y) != -1) {
 				inFlight++;
 			}
 		}
-		assertEquals(failString, 0, inFlight);
+		Assert.assertEquals(failString, 0, inFlight);
 		
 		for (int i = 0; i < slotCount; i++) {
 			inSlot += logic.getSlotBeanCount(i);
 		}
-		assertEquals(failString, beanCount, inSlot);
+		Assert.assertEquals(failString, beanCount, inSlot);
 	}
 	
 	/**
@@ -246,10 +241,10 @@ public class BeanCounterLogicTest {
 	 *             Remember, if there were an odd number of beans, (N+1)/2 beans should remain.
 	 *             Check each slot for the expected number of beans after having called logic.lowerHalf().
 	 */
-//	@Test
-//	public void testLowerHalf() {
-//		// TODO: Implement
-//	}
+	@Test
+	public void testLowerHalf() {
+		// TODO: Implement
+	}
 	
 	/**
 	 * Test case for void upperHalf().
@@ -266,10 +261,10 @@ public class BeanCounterLogicTest {
 	 *             Remember, if there were an odd number of beans, (N+1)/2 beans should remain.
 	 *             Check each slot for the expected number of beans after having called logic.upperHalf().
 	 */
-//	@Test
-//	public void testUpperHalf() {
-//		// TODO: Implement
-//	}
+	@Test
+	public void testUpperHalf() {
+		// TODO: Implement
+	}
 	
 	/**
 	 * Test case for void repeat().
@@ -281,8 +276,8 @@ public class BeanCounterLogicTest {
 	 * Invariants: If the machine is operating in skill mode,
 	 *             bean count in each slot is identical after the first run and second run of the machine. 
 	 */
-//	@Test
-//	public void testRepeat() {
-//		// TODO: Implement
-//	}
+	@Test
+	public void testRepeat() {
+		// TODO: Implement
+	}
 }
