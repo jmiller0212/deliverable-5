@@ -28,7 +28,6 @@ import java.util.Random;
 
 public class BeanCounterLogicImpl implements BeanCounterLogic {
 	int slotCount;
-	int beanCount;
 	int beansRemaining;
 	Bean[] beans;
 	Bean[] beansInFlight;
@@ -124,14 +123,22 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @param beans array of beans to add to the machine
 	 */
 	public void reset(Bean[] beans) {
-		this.beans = beans;
-		// we can get the number of beans remaining
-		this.beanCount = beans.length;
+//		System.out.println("beans values in reset");
+		for (Bean b : beans) {
+//			System.out.println("before reset");
+//			System.out.println(b.getXPos());
+			b.reset();
+//			System.out.println("after reset");
+//			System.out.println(b.getXPos());
+		}
 		
+		this.beans = beans;
+		
+		// we can get the number of beans remaining
 		this.beansRemaining = beans.length - 1;
 		
 		// initialize beansInFlight
-		for(int i = 0; i < beansInFlight.length; i++) {
+		for (int i = 0; i < beansInFlight.length; i++) {
 			if (i == 0) {
 				// first bean is initialized
 				beansInFlight[i] = beans[0];
@@ -140,25 +147,38 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 				beansInFlight[i] = null;
 			}
 		}
-		// reinitialize the beans in-slot
-		for(int i = 0; i < beansInSlot.length; i++) {
+		// zero out the beans in-slot
+		for (int i = 0; i < beansInSlot.length; i++) {
 			beansInSlot[i] = 0;
 		}
 	}
 
 	/**
-	 *
-	Bean[] beansInFlight;
-	int[] beansInSlot;
 	 * Repeats the experiment by scooping up all beans in the slots and all beans
 	 * in-flight and adding them into the pool of remaining beans. As in the
 	 * beginning, the machine starts with one bean at the top.
 	 */
 	public void repeat() {
+		for (Bean b : beans) {
+			b.reset();
+		}
 		// we can get the number of beans remaining
-		this.beanCount = beans.length;
 		this.beansRemaining = beans.length - 1;
-		beansInFlight[0] = beans[0];
+
+		// initialize beansInFlight
+		for (int i = 0; i < beansInFlight.length; i++) {
+			if (i == 0) {
+				// first bean is initialized
+				beansInFlight[i] = beans[0];
+			}
+			else {
+				beansInFlight[i] = null;
+			}
+		}
+		// zero out the beans in-slot
+		for (int i = 0; i < beansInSlot.length; i++) {
+			beansInSlot[i] = 0;
+		}
 	}
 
 	/**
@@ -173,6 +193,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		boolean statusChange = false;
 		// if an in-flight bean is ready to be slotted
 		if (beansInFlight[slotCount-1] != null) {
+//			System.out.println("in-flight bean is slotted");
 			statusChange = true;
 			// increment number of beans in that position
 			beansInSlot[beansInFlight[slotCount-1].getXPos()]++;
@@ -201,12 +222,12 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	}
 	
 	private Bean getNextBean() {
-		int nextIndex = beanCount - beansRemaining;
+		int nextIndex = beans.length - beansRemaining;
 		if (beansRemaining > 0) {
 			beansRemaining--;
 		}
 //		System.out.println("nextIndex: " + nextIndex);
-		return nextIndex < beanCount ? beans[nextIndex] : null;
+		return nextIndex < beans.length ? beans[nextIndex] : null;
 	}
 	
 	/**

@@ -76,25 +76,25 @@ public class BeanCounterLogicTest {
 	 *             in-flight bean count is 0
 	 *             in-slot bean count is 0.
 	 */
-	@Test
-	public void testReset() {
-		// TODO: Implement
-		/*
-		 * Currently, it just prints out the failString to demonstrate to you all the
-		 * cases considered by Java Path Finder. If you called the Verify API correctly
-		 * in setUp(), you should see all combinations of machines
-		 * (slotCount/beanCount/isLucky) printed here:
-		 * 
-		 * Failure in (slotCount=1, beanCount=0, isLucky=false):
-		 * Failure in (slotCount=1, beanCount=0, isLucky=true):
-		 * Failure in (slotCount=1, beanCount=1, isLucky=false):
-		 * Failure in (slotCount=1, beanCount=1, isLucky=true):
-		 * ...
-		 * 
-		 * PLEASE REMOVE when you are done implementing.
-		 */
-		System.out.println(failString);
-	}
+//	@Test
+//	public void testReset() {
+//		// TODO: Implement
+//		/*
+//		 * Currently, it just prints out the failString to demonstrate to you all the
+//		 * cases considered by Java Path Finder. If you called the Verify API correctly
+//		 * in setUp(), you should see all combinations of machines
+//		 * (slotCount/beanCount/isLucky) printed here:
+//		 * 
+//		 * Failure in (slotCount=1, beanCount=0, isLucky=false):
+//		 * Failure in (slotCount=1, beanCount=0, isLucky=true):
+//		 * Failure in (slotCount=1, beanCount=1, isLucky=false):
+//		 * Failure in (slotCount=1, beanCount=1, isLucky=true):
+//		 * ...
+//		 * 
+//		 * PLEASE REMOVE when you are done implementing.
+//		 */
+//		System.out.println(failString);
+//	}
 
 	/**
 	 * Test case for boolean advanceStep().
