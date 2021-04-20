@@ -165,23 +165,32 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * beginning, the machine starts with one bean at the top.
 	 */
 	public void repeat() {
+		// reset the beans
 		for (Bean b : beans) {
 			b.reset();
 		}
-		// we can get the number of beans remaining
-		this.beansRemaining = beans.length - 1;
-
-		// initialize beansInFlight
-		for (int i = 0; i < beansInFlight.length; i++) {
-			if (i == 0) {
-				// first bean is initialized
-				beansInFlight[i] = beans[0];
-			} else {
-				beansInFlight[i] = null;
+		
+		// reset the number of beans remaining
+		if (beans.length > 0) {
+			this.beansRemaining = beans.length - 1;
+		} else {
+			this.beansRemaining = 0;
+		}
+		
+		if (beans.length > 0) {
+			// reinitialize beansInFlight
+			for (int i = 0; i < slotCount; i++) {
+				if (i == 0) {
+					// first bean is initialized
+					beansInFlight[i] = beans[0];
+				} else {
+					beansInFlight[i] = null;
+				}
 			}
 		}
+		
 		// zero out the beans in-slot
-		for (int i = 0; i < beansInSlot.length; i++) {
+		for (int i = 0; i < slotCount; i++) {
 			beansInSlot[i] = 0;
 		}
 	}

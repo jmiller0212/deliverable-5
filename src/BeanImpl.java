@@ -31,6 +31,7 @@ public class BeanImpl implements Bean {
 	private int xpos;
 	private boolean luck;
 	private int skillLevel;
+	private int skillDec;
 	private Random rand;
 	
 	/**
@@ -48,6 +49,7 @@ public class BeanImpl implements Bean {
 			double avg = (double) (slotCount - 1) * 0.5;
 			double dev = (double) Math.sqrt(slotCount * 0.5 * (1 - 0.5));
 			this.skillLevel = (int) Math.round(rand.nextGaussian() * dev + avg);
+			this.skillDec = this.skillLevel;
 		} else {
 			this.skillLevel = -1;
 		}
@@ -70,6 +72,7 @@ public class BeanImpl implements Bean {
 	 */
 	public void reset() {
 		xpos = 0;
+		skillDec = skillLevel;
 	}
 	
 	/**
@@ -85,9 +88,9 @@ public class BeanImpl implements Bean {
 			}
 		} else {
 			// if skill has not yet run out, move right
-			if (skillLevel > 0) {
+			if (skillDec > 0) {
 				xpos++;
-				skillLevel--;
+				skillDec--;
 			}
 		}
 	}

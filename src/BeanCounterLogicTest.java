@@ -284,26 +284,34 @@ public class BeanCounterLogicTest {
 			int[] firstPass = new int[slotCount];
 			int[] secondPass = new int[slotCount];
 			boolean stepSuccessful;
+			System.out.println("test repeat skill");
 			do {
 				stepSuccessful = logic.advanceStep();
 			} while (stepSuccessful);
 			
+			String s = "";
 			for (int i = 0; i < slotCount; i++) {
 				int count = logic.getSlotBeanCount(i);
+				s += count + " ";
 				firstPass[i] = count;
 			}
+			System.out.println("first pass:\n" + s);
 			
 			logic.repeat();
 			do {
 				stepSuccessful = logic.advanceStep();
 			} while (stepSuccessful);
 			
+			s = "";
 			for (int i = 0; i < slotCount; i++) {
 				int count = logic.getSlotBeanCount(i);
+				s += count + " ";
 				secondPass[i] = count;
 			}
+			System.out.println("second pass:\n" + s);
 			Assert.assertArrayEquals(failString, firstPass, secondPass);
 		} else {
+//			System.out.println("test repeat luck");
 			logic.reset(beans);
 			boolean stepSuccessful;
 			do {
