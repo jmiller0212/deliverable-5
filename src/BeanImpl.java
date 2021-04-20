@@ -81,17 +81,10 @@ public class BeanImpl implements Bean {
 	public void choose() {
 		if (luck) {
 			int dir = rand.nextInt(2);
-//			if (dir == 0) {
-//				if (xpos > 0) {
-//					xpos--;
-//				}
-//			}
-//			else {
-//				xpos++;
-//			}
 			if (dir == 1) {
 				xpos++;
 			}
+			// otherwise, bean implicitly moves left
 		}
 		// skill
 		else {
@@ -100,12 +93,7 @@ public class BeanImpl implements Bean {
 				xpos++;
 				skillLevel--;
 			}
-			// otherwise, start moving left unless bean is already at x-position 0
-//			else {
-//				if (xpos > 0) {
-//					xpos--;
-//				}
-//			}
+			// otherwise, bean implicitly moves left
 		}
 	}
 }

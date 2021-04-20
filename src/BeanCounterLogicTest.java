@@ -85,42 +85,51 @@ public class BeanCounterLogicTest {
 		int inFlightCount = 0;
 		int inSlotCount = 0;
 		if (beanCount > 0) {
-//			System.out.println(beanCount-1 + " " + logic.getRemainingBeanCount());
 			assertEquals(failString, beanCount-1, logic.getRemainingBeanCount());
-			// in-flight bean count is 1
-			for (int y = 0; y < slotCount-1; y++) {
-				if (logic.getInFlightBeanXPos(y) >= 0) {
+			
+			// if slotCount == 1 then don't use the for loop. in for loop condition, 1-1 = 0 so the
+			// in-flight bean will never be checked and the assertion will always fail so just do it manually here.
+			if (slotCount == 1) {
+				if (logic.getInFlightBeanXPos(0) >= 0) {
 					inFlightCount++;
 				}
 			}
-//			System.out.println("1 " + inFlightCount);
+			else {
+				for (int y = 0; y < slotCount-1; y++) {
+					if (logic.getInFlightBeanXPos(y) >= 0) {
+						inFlightCount++;
+					}
+				}
+			}
 			assertEquals(failString, 1, inFlightCount);
 			
 			for (int i = 0; i < slotCount; i++) {
 				inSlotCount += logic.getSlotBeanCount(i);
 			}
-//			System.out.println("0 " + inSlotCount);
 			assertEquals(failString, 0, inSlotCount);
 		}
 		if (beanCount == 0) {
-//			System.out.println("0 " + logic.getRemainingBeanCount());
 			assertEquals(failString, 0, logic.getRemainingBeanCount());
 			
-			for (int y = 0; y < slotCount-1; y++) {
-				if (logic.getInFlightBeanXPos(y) >= 0) {
+			if (slotCount == 1) {
+				if (logic.getInFlightBeanXPos(0) >= 0) {
 					inFlightCount++;
 				}
 			}
-//			System.out.println("0 " + inFlightCount);
+			else {
+				for (int y = 0; y < slotCount-1; y++) {
+					if (logic.getInFlightBeanXPos(y) >= 0) {
+						inFlightCount++;
+					}
+				}
+			}
 			assertEquals(failString, 0, inFlightCount);
 			
 			for (int i = 0; i < slotCount; i++) {
 				inSlotCount += logic.getSlotBeanCount(i);
 			}
-//			System.out.println("0 " + inSlotCount);
 			assertEquals(failString, 0, inSlotCount);
 		}
-		System.out.println(failString);
 	}
 
 	/**
@@ -134,15 +143,16 @@ public class BeanCounterLogicTest {
 	@Test
 	public void testAdvanceStepCoordinates() {
 		boolean stepSuccessful = true;
+		boolean res;
 		logic.reset(beans);
 		do {
 			stepSuccessful = logic.advanceStep();
 			for (Bean b : beans) {
-				boolean res = false;
+				res = false;
 				if (b.getXPos() >= 0 && b.getXPos() < slotCount) {
 					res = true;
 				}
-				assertTrue(res);
+				assertTrue(failString, res);
 			}
 		} while (stepSuccessful);
 	}
@@ -157,35 +167,32 @@ public class BeanCounterLogicTest {
 	 */
 	@Test
 	public void testAdvanceStepBeanCount() {
+//		System.out.println(failString);
 		boolean stepSuccessful = true;
+		int sum;
+		int slotBeanCount;
 		logic.reset(beans);
-//		System.out.println("After reset");
-//		System.out.println(logic.toString());
 		do {
-//			System.out.println("begin");
-			int sum = 0;
+			sum = 0;
 			stepSuccessful = logic.advanceStep();
 			// number of beans still remaining
 			sum += logic.getRemainingBeanCount();
-//			System.out.println(sum);
 			
-//			System.out.println("in-flight");
 			// number of beans in-flight
 			for (int y = 0; y < slotCount; y++) {
 				if (logic.getInFlightBeanXPos(y) != -1) {
 					sum++;
-//					System.out.println(sum);
 				}
 			}
-//			System.out.println("in-slot");
+
 			// number of beans in-slot
-			for (int i = 0; i < beans.length; i++) {
-				sum += logic.getSlotBeanCount(i);
-//				System.out.println(sum);
+			for (int i = 0; i < slotCount; i++) {
+				slotBeanCount = logic.getSlotBeanCount(i);
+				if (slotBeanCount != -1) {
+					sum += slotBeanCount;
+				}
 			}
-//			System.out.println("end");
-//			System.out.println(logic.toString());
-			assertEquals(beanCount, sum);
+			assertEquals(failString, beanCount, sum);
 		} while (stepSuccessful);
 	}
 
@@ -209,19 +216,19 @@ public class BeanCounterLogicTest {
 			stepSuccessful = logic.advanceStep();
 		} while (stepSuccessful);
 		
-		assertEquals(0, logic.getRemainingBeanCount());
+		assertEquals(failString, 0, logic.getRemainingBeanCount());
 		
 		for (int y = 0; y < slotCount; y++) {
 			if (logic.getInFlightBeanXPos(y) != -1) {
 				inFlight++;
 			}
 		}
-		assertEquals(0, inFlight);
+		assertEquals(failString, 0, inFlight);
 		
-		for (int i = 0; i < beans.length; i++) {
+		for (int i = 0; i < slotCount; i++) {
 			inSlot += logic.getSlotBeanCount(i);
 		}
-		assertEquals(beanCount, inSlot);
+		assertEquals(failString, beanCount, inSlot);
 	}
 	
 	/**

@@ -83,7 +83,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @return number of beans in slot
 	 */
 	public int getSlotBeanCount(int i) {
-		return i >= 0 && i < slotCount ? beansInSlot[i] : null;
+		return i >= 0 && i < slotCount ? beansInSlot[i] : -1;
 	}
 
 	/**
@@ -123,13 +123,8 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @param beans array of beans to add to the machine
 	 */
 	public void reset(Bean[] beans) {
-//		System.out.println("beans values in reset");
 		for (Bean b : beans) {
-//			System.out.println("before reset");
-//			System.out.println(b.getXPos());
 			b.reset();
-//			System.out.println("after reset");
-//			System.out.println(b.getXPos());
 		}
 		
 		this.beans = beans;
@@ -191,9 +186,9 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 */
 	public boolean advanceStep() {
 		boolean statusChange = false;
+
 		// if an in-flight bean is ready to be slotted
 		if (beansInFlight[slotCount-1] != null) {
-//			System.out.println("in-flight bean is slotted");
 			statusChange = true;
 			// increment number of beans in that position
 			beansInSlot[beansInFlight[slotCount-1].getXPos()]++;
@@ -226,7 +221,6 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		if (beansRemaining > 0) {
 			beansRemaining--;
 		}
-//		System.out.println("nextIndex: " + nextIndex);
 		return nextIndex < beans.length ? beans[nextIndex] : null;
 	}
 	
