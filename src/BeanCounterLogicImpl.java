@@ -116,10 +116,9 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		// TODO: Implement
 	}
 	
-//	private Bean[] copy(Bean[] beans) {
-//		
-//		return null;
-//	}
+	// private Bean[] copy(Bean[] beans) {
+	// 	return null;
+	// }
 
 	/**
 	 * A hard reset. Initializes the machine with the passed beans. The machine

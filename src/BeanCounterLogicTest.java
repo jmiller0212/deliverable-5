@@ -241,10 +241,10 @@ public class BeanCounterLogicTest {
 	 *             Remember, if there were an odd number of beans, (N+1)/2 beans should remain.
 	 *             Check each slot for the expected number of beans after having called logic.lowerHalf().
 	 */
-//	@Test
-//	public void testLowerHalf() {
-//		// TODO: Implement
-//	}
+	@Test
+	public void testLowerHalf() {
+		// TODO: Implement
+	}
 	
 	/**
 	 * Test case for void upperHalf().
@@ -261,10 +261,10 @@ public class BeanCounterLogicTest {
 	 *             Remember, if there were an odd number of beans, (N+1)/2 beans should remain.
 	 *             Check each slot for the expected number of beans after having called logic.upperHalf().
 	 */
-//	@Test
-//	public void testUpperHalf() {
-//		// TODO: Implement
-//	}
+	@Test
+	public void testUpperHalf() {
+		// TODO: Implement
+	}
 	
 	/**
 	 * Test case for void repeat().
@@ -279,39 +279,31 @@ public class BeanCounterLogicTest {
 	@Test
 	public void testRepeat() {
 		// if skill
-		if(!isLuck) {
+		if (!isLuck) {
 			logic.reset(beans);
 			int[] firstPass = new int[slotCount];
 			int[] secondPass = new int[slotCount];
 			boolean stepSuccessful;
-			System.out.println("test repeat skill");
 			do {
 				stepSuccessful = logic.advanceStep();
 			} while (stepSuccessful);
-			
-			String s = "";
+
 			for (int i = 0; i < slotCount; i++) {
 				int count = logic.getSlotBeanCount(i);
-				s += count + " ";
 				firstPass[i] = count;
 			}
-			System.out.println("first pass:\n" + s);
 			
 			logic.repeat();
 			do {
 				stepSuccessful = logic.advanceStep();
 			} while (stepSuccessful);
-			
-			s = "";
+
 			for (int i = 0; i < slotCount; i++) {
 				int count = logic.getSlotBeanCount(i);
-				s += count + " ";
 				secondPass[i] = count;
 			}
-			System.out.println("second pass:\n" + s);
 			Assert.assertArrayEquals(failString, firstPass, secondPass);
 		} else {
-//			System.out.println("test repeat luck");
 			logic.reset(beans);
 			boolean stepSuccessful;
 			do {
