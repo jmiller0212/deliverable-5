@@ -1,11 +1,11 @@
 import static org.junit.Assert.*;
+import gov.nasa.jpf.vm.Verify;
 
 import java.util.Random;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import junit.framework.Assert;
 
 /**
  * Code by @author Wonsun Ahn
@@ -42,6 +42,9 @@ public class BeanCounterLogicTest {
 			 * how to use the Verify API, look at:
 			 * https://github.com/javapathfinder/jpf-core/wiki/Verify-API-of-JPF
 			 */
+			slotCount = Verify.getInt(1, 5);
+			beanCount = Verify.getInt(0, 3);
+			isLuck = Verify.getBoolean();
 		} else {
 			assert (false);
 		}
@@ -76,25 +79,49 @@ public class BeanCounterLogicTest {
 	 *             in-flight bean count is 0
 	 *             in-slot bean count is 0.
 	 */
-//	@Test
-//	public void testReset() {
-//		// TODO: Implement
-//		/*
-//		 * Currently, it just prints out the failString to demonstrate to you all the
-//		 * cases considered by Java Path Finder. If you called the Verify API correctly
-//		 * in setUp(), you should see all combinations of machines
-//		 * (slotCount/beanCount/isLucky) printed here:
-//		 * 
-//		 * Failure in (slotCount=1, beanCount=0, isLucky=false):
-//		 * Failure in (slotCount=1, beanCount=0, isLucky=true):
-//		 * Failure in (slotCount=1, beanCount=1, isLucky=false):
-//		 * Failure in (slotCount=1, beanCount=1, isLucky=true):
-//		 * ...
-//		 * 
-//		 * PLEASE REMOVE when you are done implementing.
-//		 */
-//		System.out.println(failString);
-//	}
+	@Test
+	public void testReset() {
+		logic.reset(beans);
+		int inFlightCount = 0;
+		int inSlotCount = 0;
+		if (beanCount > 0) {
+//			System.out.println(beanCount-1 + " " + logic.getRemainingBeanCount());
+			assertEquals(failString, beanCount-1, logic.getRemainingBeanCount());
+			// in-flight bean count is 1
+			for (int y = 0; y < slotCount-1; y++) {
+				if (logic.getInFlightBeanXPos(y) >= 0) {
+					inFlightCount++;
+				}
+			}
+//			System.out.println("1 " + inFlightCount);
+			assertEquals(failString, 1, inFlightCount);
+			
+			for (int i = 0; i < slotCount; i++) {
+				inSlotCount += logic.getSlotBeanCount(i);
+			}
+//			System.out.println("0 " + inSlotCount);
+			assertEquals(failString, 0, inSlotCount);
+		}
+		if (beanCount == 0) {
+//			System.out.println("0 " + logic.getRemainingBeanCount());
+			assertEquals(failString, 0, logic.getRemainingBeanCount());
+			
+			for (int y = 0; y < slotCount-1; y++) {
+				if (logic.getInFlightBeanXPos(y) >= 0) {
+					inFlightCount++;
+				}
+			}
+//			System.out.println("0 " + inFlightCount);
+			assertEquals(failString, 0, inFlightCount);
+			
+			for (int i = 0; i < slotCount; i++) {
+				inSlotCount += logic.getSlotBeanCount(i);
+			}
+//			System.out.println("0 " + inSlotCount);
+			assertEquals(failString, 0, inSlotCount);
+		}
+		System.out.println(failString);
+	}
 
 	/**
 	 * Test case for boolean advanceStep().
@@ -158,7 +185,6 @@ public class BeanCounterLogicTest {
 			}
 //			System.out.println("end");
 //			System.out.println(logic.toString());
-				// expected 3 but was 6
 			assertEquals(beanCount, sum);
 		} while (stepSuccessful);
 	}

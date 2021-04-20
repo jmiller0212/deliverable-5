@@ -273,9 +273,9 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	public String toString() {
 		StringBuilder bld = new StringBuilder();
 		Formatter fmt = new Formatter(bld);
-		for (int yPos = 0; yPos < getSlotCount(); yPos++) {
-			int xBeanPos = getInFlightBeanXPos(yPos);
-			for (int xPos = 0; xPos <= yPos; xPos++) {
+		for (int yPos = 0; yPos < getSlotCount(); yPos++) {	// for each y position (Height of the tree)
+			int xBeanPos = getInFlightBeanXPos(yPos);		// get the bean's x-coordinate for that height
+			for (int xPos = 0; xPos <= yPos; xPos++) {		// for each 
 				int spacing = (xPos == 0) ? getIndent(yPos) : (xspacing + 1);
 				String format = "%" + spacing + "d";
 				if (xPos == xBeanPos) {

@@ -62,7 +62,7 @@ public class BeanImpl implements Bean {
 	 * @return the current X-coordinate of the bean
 	 */
 	public int getXPos() {
-		return this.xpos;
+		return xpos;
 	}
 
 	/**
@@ -81,12 +81,15 @@ public class BeanImpl implements Bean {
 	public void choose() {
 		if (luck) {
 			int dir = rand.nextInt(2);
-			if (dir == 0) {
-				if (xpos > 0) {
-					xpos--;
-				}
-			}
-			else {
+//			if (dir == 0) {
+//				if (xpos > 0) {
+//					xpos--;
+//				}
+//			}
+//			else {
+//				xpos++;
+//			}
+			if (dir == 1) {
 				xpos++;
 			}
 		}
@@ -98,11 +101,11 @@ public class BeanImpl implements Bean {
 				skillLevel--;
 			}
 			// otherwise, start moving left unless bean is already at x-position 0
-			else {
-				if (xpos > 0) {
-					xpos--;
-				}
-			}
+//			else {
+//				if (xpos > 0) {
+//					xpos--;
+//				}
+//			}
 		}
 	}
 }
