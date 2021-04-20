@@ -278,6 +278,53 @@ public class BeanCounterLogicTest {
 	 */
 	@Test
 	public void testRepeat() {
-		// TODO: Implement
+		if(!isLuck) {
+			logic.reset(beans);
+			int[] firstPass = new int[slotCount];
+			int[] secondPass = new int[slotCount];
+			boolean stepSuccessful;
+			do {
+				stepSuccessful = logic.advanceStep();
+			} while (stepSuccessful);
+			
+			for (int i = 0; i < slotCount; i++) {
+				int count = logic.getSlotBeanCount(i);
+				firstPass[i] = count;
+			}
+			
+			logic.repeat();
+			do {
+				stepSuccessful = logic.advanceStep();
+			} while (stepSuccessful);
+			
+			for (int i = 0; i < slotCount; i++) {
+				int count = logic.getSlotBeanCount(i);
+				secondPass[i] = count;
+			}
+			Assert.assertArrayEquals(failString, firstPass, secondPass);
+		}
+//		logic.reset(beans);
+//		int[] firstPass = new int[slotCount];
+//		int[] secondPass = new int[slotCount];
+//		boolean stepSuccessful;
+//		do {
+//			stepSuccessful = logic.advanceStep();
+//		} while (stepSuccessful);
+//		
+//		for (int i = 0; i < slotCount; i++) {
+//			int count = logic.getSlotBeanCount(i);
+//			firstPass[i] = count;
+//		}
+//		
+//		logic.repeat();
+//		do {
+//			stepSuccessful = logic.advanceStep();
+//		} while (stepSuccessful);
+//		
+//		for (int i = 0; i < slotCount; i++) {
+//			int count = logic.getSlotBeanCount(i);
+//			secondPass[i] = count;
+//		}
+
 	}
 }
