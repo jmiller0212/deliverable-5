@@ -130,10 +130,15 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		this.beans = beans;
 		
 		// we can get the number of beans remaining
-		this.beansRemaining = beans.length - 1;
+		if (beans.length > 0) {
+			this.beansRemaining = beans.length - 1;
+		}
+		else {
+			this.beansRemaining = 0;
+		}
 		
 		// initialize beansInFlight
-		for (int i = 0; i < beansInFlight.length; i++) {
+		for (int i = 0; i < slotCount; i++) {
 			if (i == 0) {
 				// first bean is initialized
 				beansInFlight[i] = beans[0];
@@ -143,7 +148,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 			}
 		}
 		// zero out the beans in-slot
-		for (int i = 0; i < beansInSlot.length; i++) {
+		for (int i = 0; i < slotCount; i++) {
 			beansInSlot[i] = 0;
 		}
 	}
@@ -193,6 +198,8 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 			// increment number of beans in that position
 			beansInSlot[beansInFlight[slotCount-1].getXPos()]++;
 		}
+		// what i think is that there is a corner case not satisfied here
+//		else if ()
 
 		
 		for (int i = beansInFlight.length-1; i > 0; i--) {

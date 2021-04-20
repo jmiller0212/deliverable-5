@@ -108,7 +108,7 @@ public class BeanCounterLogicTest {
 			}
 			assertEquals(failString, 0, inSlotCount);
 		}
-		if (beanCount == 0) {
+		else if (beanCount == 0) {
 			assertEquals(failString, 0, logic.getRemainingBeanCount());
 			
 			if (slotCount == 1) {
