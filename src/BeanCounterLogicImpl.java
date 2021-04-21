@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,7 +37,6 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	double sum;
 	Bean[] beans;
 	ArrayList<Bean> beansAL;
-//	ArrayList<Bean> beansRemovedAL;
 	Bean[] beansInFlight;
 	int[] beansInSlot;
 
@@ -54,11 +54,15 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		}
 		this.beansInFlight = new Bean[slotCount];
 		this.beansAL = new ArrayList<>();
-//		this.beansRemovedAL = new ArrayList<>();
 		this.sum = 0;
 	}
 	
-	public static class BeanComparator implements Comparator<Bean> {
+	public static class BeanComparator implements Comparator<Bean>, Serializable {
+		/**
+		 * I guess this is necessary.
+		 */
+		private static final long serialVersionUID = 1L;
+
 		/**
 		 * compare - allows for ArrayList sorting.
 		 */
@@ -153,7 +157,6 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 				beansInSlot[b.getXPos()]--;
 				sum -= b.getXPos();
 				b.reset();
-//				beansRemovedAL.add(b);
 				halfToRemove--;
 			} else {
 				break;
@@ -188,7 +191,6 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 				beansInSlot[b.getXPos()]--;
 				sum -= b.getXPos();
 				b.reset();
-//				beansRemovedAL.add(b);
 				halfToRemove--;
 			} else {
 				break;
@@ -240,13 +242,11 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	}
 
 	/**
-	 * 
 	 * Repeats the experiment by scooping up all beans in the slots and all beans
 	 * in-flight and adding them into the pool of remaining beans. As in the
 	 * beginning, the machine starts with one bean at the top.
 	 */
 	public void repeat() {
-		// the beans that are removed from lower/upper half are the ones that have weird positions when resetting
 		// reset bean count
 		sum = 0;
 		// reset all beans

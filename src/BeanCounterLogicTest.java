@@ -442,13 +442,13 @@ public class BeanCounterLogicTest {
 	public void testAvgSlotBeanCount() {
 		if (!isLuck) {
 			logic.reset(beans);
-			double avg1, avg2;
+			double avg1 = 0;
 			boolean stepSuccessful;
 			do {
 				stepSuccessful = logic.advanceStep();
 			} while (stepSuccessful);
 			avg1 = logic.getAverageSlotBeanCount();
-			
+			double avg2 = 0;
 			logic.repeat();
 			do {
 				stepSuccessful = logic.advanceStep();
