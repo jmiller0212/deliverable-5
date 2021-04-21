@@ -133,6 +133,8 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 			halfToRemove = (beansAL.size() - 1) / 2;
 		}
 		
+		Collections.sort(beansAL, new BeanComparator());
+		
 		for (int i = 0; i < beansAL.size() - 1; i++) {
 			// remove it while halfToRemove is greater than 0
 			if (halfToRemove > 0) {
