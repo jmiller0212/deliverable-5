@@ -135,7 +135,18 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		
 		Collections.sort(beansAL, new BeanComparator());
 		
-		for (int i = 0; i < halfToRemove; i++) {
+//		for (int i = 0; i < halfToRemove; i++) {
+//			if (halfToRemove > 0) {
+//				Bean b = beansAL.remove(i);
+//				beansInSlot[b.getXPos()]--;
+//				halfToRemove--;
+//			} else {
+//				break;
+//			}
+//		}
+		
+		for (int i = 0; i < beansAL.size() - 1; i++) {
+			// remove it while halfToRemove is greater than 0
 			if (halfToRemove > 0) {
 				Bean b = beansAL.remove(i);
 				beansInSlot[b.getXPos()]--;
