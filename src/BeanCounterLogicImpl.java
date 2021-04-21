@@ -159,10 +159,23 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		}
 		
 		Collections.sort(beansAL, new BeanComparator());
+//		System.out.println("beansAL.size() "+beansAL.size());
+//		for (Bean b : beansAL) {
+//			System.out.println("bean "+b.getXPos());
+//		}
 		
-		for (int i = beansAL.size() - 1; i >= halfToRemove; i--) {
-			Bean b = beansAL.remove(i);
-			beansInSlot[b.getXPos()]--;
+//		System.out.println("Have to remove " + halfToRemove + " element");
+		
+		// for each bean in the slot array list
+		for (int i = beansAL.size() - 1; i >= 0; i--) {
+			// remove it while halfToRemove is greater than 0
+			if (halfToRemove > 0) {
+				Bean b = beansAL.remove(i);
+				beansInSlot[b.getXPos()]--;
+				halfToRemove--;
+			} else {
+				break;
+			}
 		}
 	}
 	
@@ -176,6 +189,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		this.beanCount = beans.length;
 		
 		this.beans = beans;
+		this.beansAL.clear();
 		
 		for (Bean b : this.beans) {
 			b.reset();
