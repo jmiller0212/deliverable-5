@@ -33,8 +33,10 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	int slotCount;
 	int beanCount;	// need a beanCount because of beans reassignment in repeat()
 	int beansRemaining;
+	double sum;
 	Bean[] beans;
 	ArrayList<Bean> beansAL;
+//	ArrayList<Bean> beansRemovedAL;
 	Bean[] beansInFlight;
 	int[] beansInSlot;
 
@@ -52,6 +54,8 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		}
 		this.beansInFlight = new Bean[slotCount];
 		this.beansAL = new ArrayList<>();
+//		this.beansRemovedAL = new ArrayList<>();
+		this.sum = 0;
 	}
 	
 	public static class BeanComparator implements Comparator<Bean> {
@@ -113,12 +117,14 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @return Average slot number of all the beans in slots.
 	 */
 	public double getAverageSlotBeanCount() {
-		double sum = 0;
+		int beansInSlotCount = 0;
 		for (int i = 0; i < slotCount; i++) {
-			int count = getSlotBeanCount(i);
-			sum += count * i;
+			beansInSlotCount += getSlotBeanCount(i);
 		}
-		return sum / beanCount;
+		if (beanCount == 0 || beansInSlotCount == 0) {
+			return 0;
+		}
+		return sum / beansInSlotCount;
 	}
 
 	/**
@@ -145,6 +151,9 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 			if (halfToRemove > 0) {
 				Bean b = beansAL.remove(0);
 				beansInSlot[b.getXPos()]--;
+				sum -= b.getXPos();
+				b.reset();
+//				beansRemovedAL.add(b);
 				halfToRemove--;
 			} else {
 				break;
@@ -177,6 +186,9 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 			if (halfToRemove > 0) {
 				Bean b = beansAL.remove(i);
 				beansInSlot[b.getXPos()]--;
+				sum -= b.getXPos();
+				b.reset();
+//				beansRemovedAL.add(b);
 				halfToRemove--;
 			} else {
 				break;
@@ -191,13 +203,15 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @param beans array of beans to add to the machine
 	 */
 	public void reset(Bean[] beans) {
-		this.beanCount = beans.length;
+		this.beans = beans.clone();
+		beanCount = beans.length;
+		beansAL.clear();
+		sum = 0;
 		
-		this.beans = beans;
-		this.beansAL.clear();
-		
-		for (Bean b : this.beans) {
-			b.reset();
+		for (Bean b : beans) {
+			if (b != null) {
+				b.reset();
+			}
 		}
 		
 		// we can get the number of beans remaining
@@ -226,13 +240,15 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	}
 
 	/**
+	 * 
 	 * Repeats the experiment by scooping up all beans in the slots and all beans
 	 * in-flight and adding them into the pool of remaining beans. As in the
 	 * beginning, the machine starts with one bean at the top.
 	 */
 	public void repeat() {
+		// the beans that are removed from lower/upper half are the ones that have weird positions when resetting
 		// reset bean count
-		beanCount = 0;
+		sum = 0;
 		// reset all beans
 		for (Bean b : beans) {
 			if (b != null) {
@@ -248,6 +264,8 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 				remaining.add(b);
 			}
 		}
+		// beanCount re-initialized to zero here since it is used in getNextBean()
+		beanCount = 0;
 		
 		// scoop up slot beans
 		if (beansAL.size() > 0) {
@@ -267,8 +285,6 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		
 		// and finally the remaining beans
 		if (remaining.size() > 0) {
-			
-			
 			for (int i = remaining.size() - 1; i >= 0; i--) {
 				beans[beanCount] = remaining.remove(i);
 				beanCount++;
@@ -317,6 +333,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 			// increment number of beans in that position
 			beansInSlot[beansInFlight[slotCount - 1].getXPos()]++;
 			beansAL.add(beansInFlight[slotCount - 1]);
+			sum += beansInFlight[slotCount - 1].getXPos();
 		}
 
 		for (int i = beansInFlight.length - 1; i > 0; i--) {
@@ -343,7 +360,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		if (beansRemaining > 0) {
 			beansRemaining--;
 		}
-		return nextIndex < beans.length ? beans[nextIndex] : null;
+		return nextIndex < beanCount ? beans[nextIndex] : null;
 	}
 	
 	/**

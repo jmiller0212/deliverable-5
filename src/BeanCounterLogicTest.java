@@ -426,4 +426,34 @@ public class BeanCounterLogicTest {
 			} while (stepSuccessful);
 		}
 	}
+	
+	/**
+	 * Test case for boolean getAverageSlotBeanCount().
+	 * Preconditions: None.
+	 * Execution steps: Call logic.reset(beans).
+	 *                  Call logic.advanceStep() in a loop until it returns false (the machine terminates).
+	 *       			Call logic.getAverageSlotBeanCount();
+	 *                  Call logic.repeat();
+	 *                  Call logic.advanceStep() in a loop until it returns false (the machine terminates).
+	 * Invariants: If the machine is operating in skill mode,
+	 *             average slot bean count is identical after the first run and second run of the machine.
+	 */
+	@Test
+	public void testAvgSlotBeanCount() {
+		System.out.println("start");
+		logic.reset(beans);
+		double avg1, avg2;
+		boolean stepSuccessful;
+		do {
+			stepSuccessful = logic.advanceStep();
+		} while (stepSuccessful);
+		avg1 = logic.getAverageSlotBeanCount();
+		
+		logic.repeat();
+		do {
+			stepSuccessful = logic.advanceStep();
+		} while (stepSuccessful);
+		avg2 = logic.getAverageSlotBeanCount();
+		Assert.assertEquals(failString, avg1, avg2, 0.001);
+	}
 }
