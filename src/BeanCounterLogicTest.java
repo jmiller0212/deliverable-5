@@ -414,48 +414,48 @@ public class BeanCounterLogicTest {
 	 * Invariants: If the machine is operating in skill mode,
 	 *             bean count in each slot is identical after the first run and second run of the machine. 
 	 */
-//	@Test
-//	public void testRepeat() {
-//		// if skill
-//		if (!isLuck) {
-//			System.out.println("skill");
-//			logic.reset(beans);
-//			int[] firstPass = new int[slotCount];
-//			int[] secondPass = new int[slotCount];
-//			boolean stepSuccessful = true;
-//			do {
-//				stepSuccessful = logic.advanceStep();
-//			} while (stepSuccessful);
-//			String s1 = "first\n";
-//			for (int i = 0; i < slotCount; i++) {
-//				int count = logic.getSlotBeanCount(i);
-//				s1 += count + " ";
-//				firstPass[i] = count;
-//			}
-//			logic.repeat();
-//			do {
-//				stepSuccessful = logic.advanceStep();
-//			} while (stepSuccessful);
-//			String s2 = "second\n";
-//			for (int i = 0; i < slotCount; i++) {
-//				int count = logic.getSlotBeanCount(i);
-//				s2 += count + " ";
-//				secondPass[i] = count;
-//			}
-//			System.out.println(s1);
-//			System.out.println(s2);
-//			Assert.assertArrayEquals(failString, firstPass, secondPass);
-//		} else {
-//			logic.reset(beans);
-//			boolean stepSuccessful;
-//			do {
-//				stepSuccessful = logic.advanceStep();
-//			} while (stepSuccessful);
-//			
-//			logic.repeat();
-//			do {
-//				stepSuccessful = logic.advanceStep();
-//			} while (stepSuccessful);
-//		}
-//	}
+	@Test
+	public void testRepeat() {
+		// if skill
+		if (!isLuck) {
+			System.out.println("skill");
+			logic.reset(beans);
+			int[] firstPass = new int[slotCount];
+			int[] secondPass = new int[slotCount];
+			boolean stepSuccessful = true;
+			do {
+				stepSuccessful = logic.advanceStep();
+			} while (stepSuccessful);
+			String s1 = "first\n";
+			for (int i = 0; i < slotCount; i++) {
+				int count = logic.getSlotBeanCount(i);
+				s1 += count + " ";
+				firstPass[i] = count;
+			}
+			logic.repeat();
+			do {
+				stepSuccessful = logic.advanceStep();
+			} while (stepSuccessful);
+			String s2 = "second\n";
+			for (int i = 0; i < slotCount; i++) {
+				int count = logic.getSlotBeanCount(i);
+				s2 += count + " ";
+				secondPass[i] = count;
+			}
+			System.out.println(s1);
+			System.out.println(s2);
+			Assert.assertArrayEquals(failString, firstPass, secondPass);
+		} else {
+			logic.reset(beans);
+			boolean stepSuccessful;
+			do {
+				stepSuccessful = logic.advanceStep();
+			} while (stepSuccessful);
+			
+			logic.repeat();
+			do {
+				stepSuccessful = logic.advanceStep();
+			} while (stepSuccessful);
+		}
+	}
 }
