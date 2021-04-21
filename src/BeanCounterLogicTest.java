@@ -285,12 +285,10 @@ public class BeanCounterLogicTest {
 		
 		for (int i = 0; i < slotCount; i++) {
 			count = logic.getSlotBeanCount(i);
-//			System.out.println("halfToKeep " + halfToKeep + " count " + count);
 			if (halfToKeep >= count) {
 				beforeLowerHalf[i] = count;
 				halfToKeep -= count;
 				// have we officially kept all the beans we're going to?
-//				System.out.println("halfToKeep "+ halfToKeep);
 			} else {
 				beforeLowerHalf[i] = halfToKeep;
 				break;
@@ -302,15 +300,6 @@ public class BeanCounterLogicTest {
 		for (int i = 0; i < slotCount; i++) {
 			afterLowerHalf[i] = logic.getSlotBeanCount(i);
 		}
-		
-//		String s1 = "first\n";
-//		String s2 = "second\n";
-//		for (int i = 0; i < slotCount; i++) {
-//			s1 += beforeLowerHalf[i] + " ";
-//			s2 += afterLowerHalf[i] + " ";
-//		}
-//		System.out.println(s1);
-//		System.out.println(s2);
 		Assert.assertArrayEquals(failString, beforeLowerHalf, afterLowerHalf);
 	}
 	
@@ -362,8 +351,6 @@ public class BeanCounterLogicTest {
 		}
 		Assert.assertEquals(failString, beanCount, inSlot);
 		
-		
-		
 		// calculate expected array
 		int halfToKeep = 0;
 		
@@ -375,12 +362,9 @@ public class BeanCounterLogicTest {
 		
 		for (int i = slotCount - 1; i >= 0; i--) {
 			count = logic.getSlotBeanCount(i);
-//			System.out.println("halfToKeep " + halfToKeep + " count " + count);
 			if (halfToKeep >= count) {
 				beforeUpperHalf[i] = count;
 				halfToKeep -= count;
-				// have we officially kept all the beans we're going to?
-//				System.out.println("halfToKeep "+ halfToKeep);
 			} else {
 				beforeUpperHalf[i] = halfToKeep;
 				break;
@@ -392,15 +376,6 @@ public class BeanCounterLogicTest {
 		for (int i = 0; i < slotCount; i++) {
 			afterUpperHalf[i] = logic.getSlotBeanCount(i);
 		}
-		
-//		String s1 = "first\n";
-//		String s2 = "second\n";
-//		for (int i = 0; i < slotCount; i++) {
-//			s1 += beforeUpperHalf[i] + " ";
-//			s2 += afterUpperHalf[i] + " ";
-//		}
-//		System.out.println(s1);
-//		System.out.println(s2);
 		Assert.assertArrayEquals(failString, beforeUpperHalf, afterUpperHalf);
 	}
 	
@@ -418,7 +393,6 @@ public class BeanCounterLogicTest {
 	public void testRepeat() {
 		// if skill
 		if (!isLuck) {
-			System.out.println("skill");
 			logic.reset(beans);
 			int[] firstPass = new int[slotCount];
 			int[] secondPass = new int[slotCount];
@@ -426,24 +400,18 @@ public class BeanCounterLogicTest {
 			do {
 				stepSuccessful = logic.advanceStep();
 			} while (stepSuccessful);
-			String s1 = "first\n";
 			for (int i = 0; i < slotCount; i++) {
 				int count = logic.getSlotBeanCount(i);
-				s1 += count + " ";
 				firstPass[i] = count;
 			}
 			logic.repeat();
 			do {
 				stepSuccessful = logic.advanceStep();
 			} while (stepSuccessful);
-			String s2 = "second\n";
 			for (int i = 0; i < slotCount; i++) {
 				int count = logic.getSlotBeanCount(i);
-				s2 += count + " ";
 				secondPass[i] = count;
 			}
-			System.out.println(s1);
-			System.out.println(s2);
 			Assert.assertArrayEquals(failString, firstPass, secondPass);
 		} else {
 			logic.reset(beans);

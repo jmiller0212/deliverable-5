@@ -33,7 +33,6 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	int slotCount;
 	int beanCount;	// need a beanCount because of beans reassignment in repeat()
 	int beansRemaining;
-	Bean[] resetBeans;
 	Bean[] beans;
 	ArrayList<Bean> beansAL;
 	Bean[] beansInFlight;
@@ -112,8 +111,12 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @return Average slot number of all the beans in slots.
 	 */
 	public double getAverageSlotBeanCount() {
-		// TODO: Implement
-		return 0;
+		double sum = 0;
+		for (int i = 0; i < slotCount; i++) {
+			int count = getSlotBeanCount(i);
+			sum += count * i;
+		}
+		return sum / beanCount;
 	}
 
 	/**
@@ -165,12 +168,6 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		}
 		
 		Collections.sort(beansAL, new BeanComparator());
-//		System.out.println("beansAL.size() "+beansAL.size());
-//		for (Bean b : beansAL) {
-//			System.out.println("bean "+b.getXPos());
-//		}
-		
-//		System.out.println("Have to remove " + halfToRemove + " element");
 		
 		// for each bean in the slot array list
 		for (int i = beansAL.size() - 1; i >= 0; i--) {
@@ -232,17 +229,6 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * beginning, the machine starts with one bean at the top.
 	 */
 	public void repeat() {
-		// we wanna use the beans remaining to make sure we don't have any beans unaccounted for.
-		// i.e. we want all the beans remaining except those removed from lower/upper half
-		/* 0. reset all the beans (why not do it in one place while its still easy?)
-		 * 1. save any beans remaining
-		 * 2. put beansAL beans as the first indices of beans
-		 * 3. then in flight beans
-		 * 4. and finally the remaining beans from the last run
-		 * 5. and store the new beans length as beansCount since the array may be
-		 * larger than necessary
-		 */
-		
 		// reset bean count
 		beanCount = 0;
 		// reset all beans
@@ -267,9 +253,6 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 				beans[beanCount] = beansAL.remove(i);
 				beanCount++;
 			}
-//			if (beansAL.isEmpty()) {
-//				System.out.println("beansAL is empty -- good");
-//			}
 		}
 		
 		// and in flight beans
@@ -288,9 +271,6 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 				beans[beanCount] = remaining.remove(i);
 				beanCount++;
 			}
-//			if (remaining.isEmpty()) {
-//				System.out.println("remaining is empty -- good");
-//			}
 		}
 		
 		// reset the number of beans remaining
@@ -357,7 +337,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	}
 	
 	private Bean getNextBean() {
-		int nextIndex = beans.length - beansRemaining;
+		int nextIndex = beanCount - beansRemaining;
 		if (beansRemaining > 0) {
 			beansRemaining--;
 		}
