@@ -440,20 +440,32 @@ public class BeanCounterLogicTest {
 	 */
 	@Test
 	public void testAvgSlotBeanCount() {
-		System.out.println("start");
-		logic.reset(beans);
-		double avg1, avg2;
-		boolean stepSuccessful;
-		do {
-			stepSuccessful = logic.advanceStep();
-		} while (stepSuccessful);
-		avg1 = logic.getAverageSlotBeanCount();
-		
-		logic.repeat();
-		do {
-			stepSuccessful = logic.advanceStep();
-		} while (stepSuccessful);
-		avg2 = logic.getAverageSlotBeanCount();
-		Assert.assertEquals(failString, avg1, avg2, 0.001);
+		if (!isLuck) {
+			logic.reset(beans);
+			double avg1, avg2;
+			boolean stepSuccessful;
+			do {
+				stepSuccessful = logic.advanceStep();
+			} while (stepSuccessful);
+			avg1 = logic.getAverageSlotBeanCount();
+			
+			logic.repeat();
+			do {
+				stepSuccessful = logic.advanceStep();
+			} while (stepSuccessful);
+			avg2 = logic.getAverageSlotBeanCount();
+			Assert.assertEquals(failString, avg1, avg2, 0.001);
+		} else {
+			logic.reset(beans);
+			boolean stepSuccessful;
+			do {
+				stepSuccessful = logic.advanceStep();
+			} while (stepSuccessful);
+			
+			logic.repeat();
+			do {
+				stepSuccessful = logic.advanceStep();
+			} while (stepSuccessful);
+		}
 	}
 }
