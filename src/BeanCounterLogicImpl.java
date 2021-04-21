@@ -54,8 +54,10 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 		this.beansAL = new ArrayList<>();
 	}
 	
-	public class BeanComparator implements Comparator<Bean> {
-		
+	public static class BeanComparator implements Comparator<Bean> {
+		/**
+		 * compare - allows for ArrayList sorting.
+		 */
 		public int compare(Bean b1, Bean b2) {
 			if (b1.getXPos() == b2.getXPos()) {
 				return 0;
