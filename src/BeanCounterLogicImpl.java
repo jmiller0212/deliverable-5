@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Formatter;
 import java.util.Random;
 
@@ -29,9 +31,10 @@ import java.util.Random;
 
 public class BeanCounterLogicImpl implements BeanCounterLogic {
 	int slotCount;
+	int beanCount;	// need a beanCount because of beans reassignment in repeat()
 	int beansRemaining;
+	Bean[] resetBeans;
 	Bean[] beans;
-	Bean[] savedBeans;
 	ArrayList<Bean> beansAL;
 	Bean[] beansInFlight;
 	int[] beansInSlot;
@@ -45,10 +48,24 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	BeanCounterLogicImpl(int slotCount) {
 		this.slotCount = slotCount;
 		this.beansInSlot = new int[slotCount];
-		for (int i = 0; i < beansInSlot.length; i++) {
+		for (int i = 0; i < slotCount; i++) {
 			beansInSlot[i] = 0;
 		}
 		this.beansInFlight = new Bean[slotCount];
+		this.beansAL = new ArrayList<>();
+	}
+	
+	public class BeanComparator implements Comparator<Bean> {
+		
+		public int compare(Bean b1, Bean b2) {
+			if (b1.getXPos() == b2.getXPos()) {
+				return 0;
+			} else if (b1.getXPos() > b2.getXPos()) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
 	}
 
 	/**
@@ -57,7 +74,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @return number of slots
 	 */
 	public int getSlotCount() {
-		return this.slotCount;
+		return slotCount;
 	}
 	
 	/**
@@ -66,7 +83,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @return number of beans remaining
 	 */
 	public int getRemainingBeanCount() {
-		return this.beansRemaining;
+		return beansRemaining;
 	}
 
 	/**
@@ -100,37 +117,23 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	}
 
 	/**
-	 * beans[0] to beans[length]
-	 * beansInSlot are the first x number of beans
-	 * then we can remove the first x number of beans with the
-	 * lowest or highest xpositions from beans array
-	 * depending on the upperhalf or lowerhalf.
-	 * 
-	 * This won't fuck with our beans in flight or beans remaining.
-	 * 
-	 * 
 	 * Removes the lower half of all beans currently in slots, keeping only the
 	 * upper half. If there are an odd number of beans, remove (N-1)/2 beans, where
 	 * N is the number of beans. So, if there are 3 beans, 1 will be removed and 2
 	 * will be remaining.
 	 */
 	public void upperHalf() {
-//		int inFlight = 0;
-//		for (int y = 0; y < slotCount; y++) {
-//			if (this.getInFlightBeanXPos(y) != -1) {
-//				inFlight++;
-//			}
-//		}
-//		
-//		int inSlot = beans.length - (beansRemaining + inFlight);
+		// the number of beans we have to remove
+		int halfToRemove = 0;
 		
-		int halfToRemove = 0;	// the number of beans we have to remove
-		// even number of beans inSlot
+		// even
 		if (beansAL.size() % 2 == 0) {
 			halfToRemove = beansAL.size() / 2;
 		} else {	// odd
 			halfToRemove = (beansAL.size() - 1) / 2;
 		}
+		
+		Collections.sort(beansAL, new BeanComparator());
 		
 		for (int i = 0; i < halfToRemove; i++) {
 			Bean b = beansAL.remove(i);
@@ -145,13 +148,24 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * will be remaining.
 	 */
 	public void lowerHalf() {
-		// TODO: Implement
+		// the number of beans we have to remove
+		int halfToRemove = 0;
+		
+		// even
+		if (beansAL.size() % 2 == 0) {
+			halfToRemove = beansAL.size() / 2;
+		} else {	// odd
+			halfToRemove = (beansAL.size() - 1) / 2;
+		}
+		
+		Collections.sort(beansAL, new BeanComparator());
+		
+		for (int i = beansAL.size() - 1; i >= halfToRemove; i--) {
+			Bean b = beansAL.remove(i);
+			beansInSlot[b.getXPos()]--;
+		}
 	}
 	
-	// private Bean[] copy(Bean[] beans) {
-	// 	return null;
-	// }
-
 	/**
 	 * A hard reset. Initializes the machine with the passed beans. The machine
 	 * starts with one bean at the top.
@@ -159,19 +173,19 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @param beans array of beans to add to the machine
 	 */
 	public void reset(Bean[] beans) {
-		// beansAL = new ArrayList<>(beans.length);
-		beansAL = new ArrayList<>();
-		for (Bean b : beans) {
-			b.reset();
-		}
+		this.beanCount = beans.length;
 		
 		this.beans = beans;
 		
+		for (Bean b : this.beans) {
+			b.reset();
+		}
+		
 		// we can get the number of beans remaining
 		if (beans.length > 0) {
-			this.beansRemaining = beans.length - 1;
+			beansRemaining = beans.length - 1;
 		} else {
-			this.beansRemaining = 0;
+			beansRemaining = 0;
 		}
 		
 		if (beans.length > 0) {
@@ -198,19 +212,75 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * beginning, the machine starts with one bean at the top.
 	 */
 	public void repeat() {
-		// reset the beans
+		// we wanna use the beans remaining to make sure we don't have any beans unaccounted for.
+		// i.e. we want all the beans remaining except those removed from lower/upper half
+		/* 0. reset all the beans (why not do it in one place while its still easy?)
+		 * 1. save any beans remaining
+		 * 2. put beansAL beans as the first indices of beans
+		 * 3. then in flight beans
+		 * 4. and finally the remaining beans from the last run
+		 * 5. and store the new beans length as beansCount since the array may be
+		 * larger than necessary
+		 */
+		
+		// reset bean count
+		beanCount = 0;
+		// reset all beans
 		for (Bean b : beans) {
-			b.reset();
+			if (b != null) {
+				b.reset();
+			}
+		}
+		
+		// save reference of any remaining beans
+		ArrayList<Bean> remaining = new ArrayList<>();
+		while (beansRemaining > 0) {
+			Bean b = getNextBean();
+			if (b != null) {
+				remaining.add(b);
+			}
+		}
+		
+		// scoop up slot beans
+		if (beansAL.size() > 0) {
+			for (int i = beansAL.size() - 1; i >= 0; i--) {
+				beans[beanCount] = beansAL.remove(i);
+				beanCount++;
+			}
+//			if (beansAL.isEmpty()) {
+//				System.out.println("beansAL is empty -- good");
+//			}
+		}
+		
+		// and in flight beans
+		for (int i = beansInFlight.length - 1; i >= 0; i--) {
+			if (beansInFlight[i] != null) {
+				beans[beanCount] = beansInFlight[i];
+				beanCount++;
+			}
+		}
+		
+		// and finally the remaining beans
+		if (remaining.size() > 0) {
+			
+			
+			for (int i = remaining.size() - 1; i >= 0; i--) {
+				beans[beanCount] = remaining.remove(i);
+				beanCount++;
+			}
+//			if (remaining.isEmpty()) {
+//				System.out.println("remaining is empty -- good");
+//			}
 		}
 		
 		// reset the number of beans remaining
-		if (beans.length > 0) {
-			this.beansRemaining = beans.length - 1;
+		if (beanCount > 0) {
+			beansRemaining = beanCount - 1;
 		} else {
-			this.beansRemaining = 0;
+			beansRemaining = 0;
 		}
-		
-		if (beans.length > 0) {
+
+		if (beanCount > 0) {
 			// reinitialize beansInFlight
 			for (int i = 0; i < slotCount; i++) {
 				if (i == 0) {
@@ -256,7 +326,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 				beansInFlight[i] = null;
 			}
 		}
-		Bean nextBean = this.getNextBean();
+		Bean nextBean = getNextBean();
 		if (nextBean != null) {
 			statusChange = true;
 			beansInFlight[0] = nextBean;

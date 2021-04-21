@@ -95,17 +95,4 @@ public class BeanImpl implements Bean {
 			}
 		}
 	}
-	
-	class BeanComparator implements Comparator<Bean> {
-		
-		public int compare(Bean b1, Bean b2) {
-			if (b1.getXPos() == b2.getXPos()) {
-				return 0;
-			} else if (b1.getXPos() > b2.getXPos()) {
-				return 1;
-			} else {
-				return -1;
-			}
-		}
-	}
 }
