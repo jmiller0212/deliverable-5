@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.Random;
 
@@ -30,6 +31,8 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	int slotCount;
 	int beansRemaining;
 	Bean[] beans;
+	Bean[] savedBeans;
+	ArrayList<Bean> beansAL;
 	Bean[] beansInFlight;
 	int[] beansInSlot;
 
@@ -97,13 +100,42 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	}
 
 	/**
+	 * beans[0] to beans[length]
+	 * beansInSlot are the first x number of beans
+	 * then we can remove the first x number of beans with the
+	 * lowest or highest xpositions from beans array
+	 * depending on the upperhalf or lowerhalf.
+	 * 
+	 * This won't fuck with our beans in flight or beans remaining.
+	 * 
+	 * 
 	 * Removes the lower half of all beans currently in slots, keeping only the
 	 * upper half. If there are an odd number of beans, remove (N-1)/2 beans, where
 	 * N is the number of beans. So, if there are 3 beans, 1 will be removed and 2
 	 * will be remaining.
 	 */
 	public void upperHalf() {
-		// TODO: Implement
+//		int inFlight = 0;
+//		for (int y = 0; y < slotCount; y++) {
+//			if (this.getInFlightBeanXPos(y) != -1) {
+//				inFlight++;
+//			}
+//		}
+//		
+//		int inSlot = beans.length - (beansRemaining + inFlight);
+		
+		int halfToRemove = 0;	// the number of beans we have to remove
+		// even number of beans inSlot
+		if (beansAL.size() % 2 == 0) {
+			halfToRemove = beansAL.size() / 2;
+		} else {	// odd
+			halfToRemove = (beansAL.size() - 1) / 2;
+		}
+		
+		for (int i = 0; i < halfToRemove; i++) {
+			Bean b = beansAL.remove(i);
+			beansInSlot[b.getXPos()]--;
+		}
 	}
 
 	/**
@@ -127,6 +159,8 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 	 * @param beans array of beans to add to the machine
 	 */
 	public void reset(Bean[] beans) {
+		// beansAL = new ArrayList<>(beans.length);
+		beansAL = new ArrayList<>();
 		for (Bean b : beans) {
 			b.reset();
 		}
@@ -210,6 +244,7 @@ public class BeanCounterLogicImpl implements BeanCounterLogic {
 			statusChange = true;
 			// increment number of beans in that position
 			beansInSlot[beansInFlight[slotCount - 1].getXPos()]++;
+			beansAL.add(beansInFlight[slotCount - 1]);
 		}
 
 		for (int i = beansInFlight.length - 1; i > 0; i--) {

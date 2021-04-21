@@ -1,3 +1,4 @@
+import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -91,6 +92,19 @@ public class BeanImpl implements Bean {
 			if (skillDec > 0) {
 				xpos++;
 				skillDec--;
+			}
+		}
+	}
+	
+	class BeanComparator implements Comparator<Bean> {
+		
+		public int compare(Bean b1, Bean b2) {
+			if (b1.getXPos() == b2.getXPos()) {
+				return 0;
+			} else if (b1.getXPos() > b2.getXPos()) {
+				return 1;
+			} else {
+				return -1;
 			}
 		}
 	}

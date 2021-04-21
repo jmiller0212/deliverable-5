@@ -243,7 +243,53 @@ public class BeanCounterLogicTest {
 	 */
 	@Test
 	public void testLowerHalf() {
-		// TODO: Implement
+		boolean stepSuccessful = true;
+		int inFlight = 0;
+		int inSlot = 0;
+		int halfSlot = 0;
+		if (slotCount % 2 == 0) // if number of slots is even 
+		{
+			halfSlot = slotCount / 2; 
+		}
+		else // if number of slots is odd 
+		{
+			halfSlot = (slotCount + 1) / 2; 
+		}
+		int[] beforeLowerHalf = new int[halfSlot];
+		int[] afterLowerHalf = new int[halfSlot];
+		logic.reset(beans);
+		do 
+		{
+			stepSuccessful = logic.advanceStep();
+		} 
+		while (stepSuccessful);
+		
+		Assert.assertEquals(failString, 0, logic.getRemainingBeanCount());
+		
+		for (int y = 0; y < slotCount; y++) 
+		{
+			if (logic.getInFlightBeanXPos(y) != -1) 
+			{
+				inFlight++;
+			}
+		}
+		Assert.assertEquals(failString, 0, inFlight);
+		
+		for (int i = 0; i < slotCount; i++) 
+		{
+			inSlot += logic.getSlotBeanCount(i);
+		}
+		Assert.assertEquals(failString, beanCount, inSlot);
+		for (int j = 0; j < halfSlot; j++)
+		{
+			beforeLowerHalf[j] = logic.getSlotBeanCount(j); 
+		}
+		logic.lowerHalf();
+		for (int k = 0; k < halfSlot; k++)
+		{
+			afterLowerHalf[k] = logic.getSlotBeanCount(k);
+		}
+		Assert.assertArrayEquals(failString, beforeLowerHalf, afterLowerHalf);
 	}
 	
 	/**
@@ -262,8 +308,57 @@ public class BeanCounterLogicTest {
 	 *             Check each slot for the expected number of beans after having called logic.upperHalf().
 	 */
 	@Test
-	public void testUpperHalf() {
-		// TODO: Implement
+	public void testUpperHalf() 
+	{
+		boolean stepSuccessful = true;
+		int inFlight = 0;
+		int inSlot = 0;
+		int lowerHalfSlots = 0;
+		int upperHalfSlots = 0; 
+		if (slotCount % 2 == 0) // if number of slots is even 
+		{
+			lowerHalfSlots = slotCount / 2; 
+		}
+		else // if number of slots is odd 
+		{
+			lowerHalfSlots = (slotCount + 1) / 2; 
+		}
+		upperHalfSlots = slotCount - lowerHalfSlots; // Upperhalf = Total Number of Slots - Lower Half of slots 
+		int[] beforeUpperHalf = new int[upperHalfSlots];
+		int[] afterUpperHalf = new int[upperHalfSlots];
+		logic.reset(beans);
+		do 
+		{
+			stepSuccessful = logic.advanceStep();
+		} 
+		while (stepSuccessful);
+		
+		Assert.assertEquals(failString, 0, logic.getRemainingBeanCount());
+		
+		for (int y = 0; y < slotCount; y++) 
+		{
+			if (logic.getInFlightBeanXPos(y) != -1) 
+			{
+				inFlight++;
+			}
+		}
+		Assert.assertEquals(failString, 0, inFlight);
+		
+		for (int i = 0; i < slotCount; i++) 
+		{
+			inSlot += logic.getSlotBeanCount(i);
+		}
+		Assert.assertEquals(failString, beanCount, inSlot);
+		for (int j = 0; j < upperHalfSlots; j++)
+		{
+			beforeUpperHalf[j] = logic.getSlotBeanCount(j); 
+		}
+		logic.upperHalf();
+		for (int k = 0; k < upperHalfSlots; k++)
+		{
+			afterUpperHalf[k] = logic.getSlotBeanCount(k);
+		}
+		Assert.assertArrayEquals(failString, beforeUpperHalf, afterUpperHalf);
 	}
 	
 	/**
